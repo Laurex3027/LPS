@@ -15,12 +15,12 @@
 }
 
 \usage{
-  clusterize(expr, customLayout = FALSE, cex.col = NA, cex.row = NA, mai.left = NA,
-    mai.bottom = NA, mai.right = 0.1, side = NULL, side.height = 1, side.col = NULL,
+  clusterize(expr, side = NULL, cex.col = NA, cex.row = NA, mai.left = NA,
+    mai.bottom = NA, mai.right = 0.1, mai.top = 0.1, side.height = 1, side.col = NULL,
     col.heatmap = heat(), zlim = "0 centered", norm = c("rows", "columns", "none"),
-    norm.clust = TRUE, norm.robust = FALSE, plot = TRUE, widths = c(1, 4),
-    heights = c(1, 4), order.genes = NULL, order.samples = NULL, fun.dist = dist.COR,
-    fun.hclust = hclust.ward)
+    norm.clust = TRUE, norm.robust = FALSE, customLayout = FALSE, getLayout = FALSE,
+    plot = TRUE, widths = c(1, 4), heights = c(1, 4), order.genes = NULL,
+    order.samples = NULL, fun.dist = dist.COR, fun.hclust = hclust.ward)
   dist.COR(input)
   hclust.ward(input)
 }
@@ -29,8 +29,8 @@
   \item{expr}{
     A numeric matrix, holding features (genes) in columns and observations (samples) in rows. Rows and columns will be ordered according to hierarchical clustering results.
 }
-  \item{customLayout}{
-    Single logical value, as \code{\link{layout}} does not allow nested calls, set this to TRUE to make your own call to layout and embed this plot in a wider one.
+  \item{side}{
+    To be passed to \code{\link{heat.map}}.
 }
   \item{cex.col}{
     To be passed to \code{\link{heat.map}}.
@@ -47,7 +47,7 @@
   \item{mai.right}{
     To be passed to \code{\link{heat.map}}.
 }
-  \item{side}{
+  \item{mai.top}{
     To be passed to \code{\link{heat.map}}.
 }
   \item{side.height}{
@@ -70,6 +70,12 @@
 }
   \item{norm.robust}{
     To be passed to \code{\link{heat.map}}.
+}
+  \item{customLayout}{
+    Single logical value, as \code{\link{layout}} does not allow nested calls, set this to TRUE to make your own call to layout and embed this plot in a wider one.
+}
+  \item{getLayout}{
+    Single logical value, whether to only return the \code{layout} arguments that would be used with the set of arguments provided or not. It can prove useful to build custom layouts, e.g. merging this plot to an other. See also \code{customLayout}.
 }
   \item{plot}{
     To be passed to \code{\link{heat.map}}.

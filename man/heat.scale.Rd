@@ -9,7 +9,8 @@
 }
 
 \usage{
-  heat.scale(zlim, col.heatmap, at = -10:10, horiz = TRUE, robust = FALSE)
+  heat.scale(zlim, col.heatmap, at = -10:10, horiz = TRUE, robust = FALSE,
+    customMar = FALSE, title=NA)
 }
 
 \arguments{
@@ -27,6 +28,12 @@
 }
   \item{robust}{
     Single logical value, whether to legend \code{median} and \code{mad} or \code{mean} and \code{sd}. Should correspond to \code{\link{heat.map}} \code{norm.robust} value.
+}
+  \item{customMar}{
+    Single logical value, whether to skip the call to \code{\link{par}} to set \code{mar} or not.
+}
+  \item{title}{
+    Single character value, the axis title to use (\code{NA} for automatic generation).
 }
 }
 

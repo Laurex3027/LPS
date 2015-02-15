@@ -1,12 +1,14 @@
 # Draws a heatmap scale for legend
 # Author : Sylvain Mareschal <maressyl@gmail.com>
-heat.scale <- function(zlim, col.heatmap, at=-10:10, horiz=TRUE, robust=FALSE) {
+heat.scale <- function(zlim, col.heatmap, at=-10:10, horiz=TRUE, robust=FALSE, customMar=FALSE, title=NA) {
 	missing(zlim)
 	missing(col.heatmap)
 	
 	# Background
-	if(isTRUE(horiz)) { par(mar=c(2.5, 0.5, 2,   0.5))
-	} else            { par(mar=c(0.5, 2,   0.5, 4))
+	if(!isTRUE(customMar)) {
+		if(isTRUE(horiz)) { par(mar=c(2.5, 0.5, 2,   0.5))
+		} else            { par(mar=c(0.5, 2,   0.5, 4))
+		}
 	}
 	if(isTRUE(horiz)) { plot(x=NA, y=NA, xlim=zlim, ylim=0:1, xlab="", ylab="", xaxt="n", yaxt="n", xaxs="i", yaxs="i")
 	} else            { plot(x=NA, y=NA, xlim=0:1, ylim=zlim, xlab="", ylab="", xaxt="n", yaxt="n", xaxs="i", yaxs="i")
@@ -19,10 +21,20 @@ heat.scale <- function(zlim, col.heatmap, at=-10:10, horiz=TRUE, robust=FALSE) {
 	}
 	box()
 	
+	# Unit
+	if(isTRUE(robust)) { unit <- "MAD"
+	} else             { unit <- "SD"
+	}
+	
 	# Legend
 	at <- at[ at != 0 ]
-	axis(side=ifelse(isTRUE(horiz), 1, 4), at=at, labels=sprintf("%+i", at), las=1)
+	axis(side=ifelse(isTRUE(horiz), 1, 4), at=at, labels=sprintf("%+i%s", at, ifelse(isTRUE(horiz), "", sprintf(" %s", unit))), las=1)
 	axis(side=ifelse(isTRUE(horiz), 1, 4), at=0, labels=ifelse(robust, "median", "mean"), las=1)
-	mtext(side=ifelse(isTRUE(horiz), 3, 2), text=sprintf("Gene expression (in %s units)", ifelse(robust, "MAD", "SD")), line=1)
+	
+	# Title
+	if(isTRUE(horiz)) {
+		if(is.na(title)) title <- sprintf("Gene expression (in %s units)", unit)
+		mtext(side=ifelse(isTRUE(horiz), 3, 2), text=title, line=1)
+	}
 }
 

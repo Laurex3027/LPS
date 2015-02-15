@@ -14,10 +14,10 @@
   \method{predict}{LPS}(object, newdata, type=c("class", "probability", "score"),
     method = c("Wright", "Radmacher", "exact"), threshold = 0.9, na.rm = TRUE,
     subset = NULL, col.lines = "#FFFFFF", col.classes = c("#FFCC00", "#1144CC"),
-    customLayout = FALSE, cex.col = NA, cex.row = NA, mai.left = NA, mai.bottom = NA,
-    mai.right = 1, side = NULL, side.height = 1, side.col = NULL, col.heatmap = heat(),
-    zlim = "0 centered", norm = c("rows", "columns", "none"),
-    norm.robust = FALSE, plot = FALSE, ...)
+    plot = FALSE, side = NULL, cex.col = NA, cex.row = NA, mai.left = NA,
+    mai.bottom = NA, mai.right = 1, mai.top = 0.1, side.height = 1, side.col = NULL,
+    col.heatmap = heat(), zlim = "0 centered", norm = c("rows", "columns", "none"),
+    norm.robust = FALSE, customLayout = FALSE, getLayout = FALSE, ...)
 }
 
 \arguments{
@@ -48,8 +48,11 @@
   \item{col.classes}{
     If \code{graph} is TRUE, a character vector of two values giving to each class a distinct color.
 }
-  \item{customLayout}{
-    Single logical value, as \code{\link{layout}} does not allow nested calls, set this to TRUE to make your own call to layout and embed this plot in a wider one.
+  \item{plot}{
+    To be passed to \code{\link{heat.map}}.
+}
+  \item{side}{
+    To be passed to \code{\link{heat.map}}.
 }
   \item{cex.col}{
     To be passed to \code{\link{heat.map}}.
@@ -66,7 +69,7 @@
   \item{mai.right}{
     To be passed to \code{\link{heat.map}} (used to plot score coefficients).
 }
-  \item{side}{
+  \item{mai.top}{
     To be passed to \code{\link{heat.map}}.
 }
   \item{side.height}{
@@ -87,7 +90,10 @@
   \item{norm.robust}{
     To be passed to \code{\link{heat.map}}.
 }
-  \item{plot}{
+  \item{customLayout}{
+    To be passed to \code{\link{heat.map}}.
+}
+  \item{getLayout}{
     To be passed to \code{\link{heat.map}}.
 }
   \item{\dots}{

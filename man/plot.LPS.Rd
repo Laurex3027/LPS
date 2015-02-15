@@ -9,8 +9,9 @@
 }
 
 \usage{
-  \method{plot}{LPS}(x, y, method=c("Wright", "Radmacher", "exact"), xlim, yaxt = "n", xlab = "LPS",
-    ylab, ...)
+  \method{plot}{LPS}(x, y, method=c("Wright", "Radmacher", "exact"), threshold = 0.9,
+    values = FALSE, col.classes = c("#FFCC00", "#1144CC"), xlim, yaxt = "s",
+    xlab = "LPS", ylab, las = 0, lwd = 2,...)
 }
 
 \arguments{
@@ -23,6 +24,15 @@
   \item{method}{
     Single character value, the method to use for predictions. See \code{\link{predict.LPS}}.
 }
+  \item{threshold}{
+    Single numeric value, the confidence threshold to use for the "gray zone" (scores for which none of the two groups can be assigned with a probability greater than this threshold). See \code{\link{predict.LPS}}.
+}
+  \item{values}{
+    Single logical value, whether to plot individual scores from the training series or not.
+}
+  \item{col.classes}{
+    Character vector of two values giving to each class a distinct color.
+}
   \item{xlim}{
     To be passed to \code{\link{plot}}, see \code{\link{plot.default}}.
 }
@@ -34,6 +44,12 @@
 }
   \item{ylab}{
     To be passed to \code{\link{plot}}, see \code{\link{plot.default}}.
+}
+  \item{las}{
+    To be passed to \code{\link{plot}}, see \code{\link{par}}.
+}
+  \item{lwd}{
+    To be passed to \code{\link{plot}}, see \code{\link{par}}.
 }
   \item{\dots}{
     Further arguments to be passed to \code{\link{plot}} or \code{\link{par}}.

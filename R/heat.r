@@ -5,7 +5,7 @@ heat.lin <- function(n, part) {
 	return(shape)	
 }
 heat.exp <- function(n, part, base=1.015) {
-	shape <- 1.015^(0:(n-1))
+	shape <- base^(0:(n-1))
 	if(part == 2) shape <- max(shape) - rev(shape)
 	return(shape)	
 }

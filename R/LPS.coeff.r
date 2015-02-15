@@ -56,17 +56,14 @@ LPS.coeff <- function(data, response, formula=~1, type=c("t", "limma"), p.value=
 	# LIMMA T
 	if(type == "limma") {
 		# LIMMA fit
-		require("limma", quietly=TRUE)
 		design <- cbind(base=1, diff=as.integer(response == levels(response)[2]))
-		fit <- lmFit(t(expr), design)
-		fit <- eBayes(fit)
+		fit <- limma::lmFit(t(expr), design)
+		fit <- limma::eBayes(fit)
 		out <- fit$t[,"diff"]
 		
 		# P-value
-		if(isTRUE(p.value)) {
-			out <- cbind(t=out, p.value=fit$p.value[,"diff"])
-		} else {
-			out <- matrix(out, dimnames=list(names(out), "t"))
+		if(isTRUE(p.value)) { out <- cbind(t=out, p.value=fit$p.value[,"diff"])
+		} else              { out <- matrix(out, dimnames=list(names(out), "t"))
 		}
 	} else {
 		# Expression matrixes
@@ -110,7 +107,7 @@ LPS.coeff <- function(data, response, formula=~1, type=c("t", "limma"), p.value=
 			out[,1] / apply(expr, 2, mean, na.rm=TRUE),
 			out
 		)
-		colnames(out)[1] <- sprintf("weighted.%s", colnames(out)[1])
+		colnames(out)[1] <- sprintf("weighted.%s", colnames(out)[2])
 	}
 	
 	return(out)

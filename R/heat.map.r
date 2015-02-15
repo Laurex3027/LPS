@@ -2,26 +2,51 @@
 # Author : Sylvain Mareschal <maressyl@gmail.com>
 heat.map <- function(
 	expr,
-	customLayout = FALSE,
+	side = NULL,
 	cex.col = NA,
 	cex.row = NA,
 	mai.left = NA,
 	mai.bottom = NA,
 	mai.right = 0.1,
-	side = NULL,
+	mai.top = 0.1,
 	side.height = 1,
 	side.col = NULL,
 	col.heatmap = heat(),
 	zlim = "0 centered",   # or "range", or numeric(2)
 	norm = c("rows", "columns", "none"),
 	norm.robust = FALSE,
-	plot = TRUE
+	customLayout = FALSE,
+	getLayout = FALSE,
+	font = c(1, 3)
 	) {
 	# Arg check
 	norm <- match.arg(norm)
 	
+	# Layout parameters
+	if(!isTRUE(customLayout)) {
+		if(!is.null(side) && ncol(side) > 0) {
+			mat <- matrix(c(1:2), ncol=1)
+			heights <- c(lcm(ncol(side)*side.height), 1)
+			widths <- 1L
+		} else {
+			mat <- 1L
+			heights <- 1L
+			widths <- 1L
+		}
+	} else {
+		# No layout call
+		mat <- as.integer(NA)
+		heights <- as.integer(NA)
+		widths <- as.integer(NA)
+	}
+	
+	# Stop returning layout
+	if(isTRUE(getLayout)) {
+		return(list(mat=mat, heights=heights, widths=widths))
+	}
+	
 	# Side color initialization
-	if(!isTRUE(plot) || is.null(side)) {
+	if(is.null(side)) {
 		# No side color
 		side <- matrix(character(0), ncol=0, nrow=0)
 		pal.side <- character(0)
@@ -44,7 +69,7 @@ heat.map <- function(
 			if(is.null(side.col)) {
 				# Default palettes
 				if(length(val.side) > 8) { pal.side <- rainbow(n=length(val.side), v=0.8)
-				} else                   { pal.side <- c("#FFCC00", "#333399", "#993333", "#66CC00", "#CC99FF", "#000000", "#FFFFFF", "#99CCFF")[1:length(val.side)]
+				} else                   { pal.side <- c("#2a80b9", "#c1392b", "#f39c11", "#52be80", "#c185db", "#fee203", "#bec3c7")[1:length(val.side)]
 				}
 			} else {
 				# Custom function
@@ -59,11 +84,9 @@ heat.map <- function(
 		}
 	}
 
-	# Layout
-	if(isTRUE(plot) && !isTRUE(customLayout)) {
-		if(ncol(side) > 0) { layout(matrix(c(1:2), ncol=1), heights=c(lcm(ncol(side)*side.height), 1))
-		} else             { layout(1)
-		}
+	# Layout call
+	if(!isTRUE(customLayout)) {
+		layout(mat=mat, heights=heights, widths=widths)
 		on.exit(layout(1))
 	}
 	
@@ -99,32 +122,30 @@ heat.map <- function(
 	if(is.na(mai.left))   mai.left   <- max(strwidth(colnames(expr), units="inches", cex=cex.row)) + par("cin")[2]
 	if(is.na(mai.bottom)) mai.bottom <- max(strwidth(rownames(expr), units="inches", cex=cex.col)) + par("cin")[2]
 	
-	if(isTRUE(plot)) {
-		# Side color plot (middle right)
-		if(ncol(side) > 0) {
-			par(mai=c(0, mai.left, 0.1, mai.right))
-			plot(x=NA, y=NA, xlim=c(0.5, nrow(expr)+0.5), ylim=c(0, ncol(side)), xaxs="i", yaxs="i", xaxt="n", yaxt="n", xlab="", ylab="")
-			for(k in 1:ncol(side)) {
-				# Annotation colors
-				col <- side[,k]
-				isCustom <- grepl("^#([0-9A-Fa-f]{2}){3,4}$", col)
-				col[!isCustom] <- pal.side[ col[!isCustom] ]
-				
-				# Draws annotation boxes
-				rect(xleft=(1:nrow(expr))-0.5, xright=(1:nrow(expr))+0.5, ybottom=k-1L, ytop=k, col=col)
-				
-				# Add annotation title
-				if(!is.null(colnames(side))) mtext(side=2, at=k-0.5, text=colnames(side)[k], las=2, line=1)
-			}
+	# Side color plot (top)
+	if(ncol(side) > 0) {
+		par(mai=c(0, mai.left, mai.top, mai.right))
+		plot(x=NA, y=NA, xlim=c(0.5, nrow(expr)+0.5), ylim=c(0, ncol(side)), xaxs="i", yaxs="i", xaxt="n", yaxt="n", xlab="", ylab="")
+		for(k in 1:ncol(side)) {
+			# Annotation colors
+			col <- side[,k]
+			isCustom <- grepl("^#([0-9A-Fa-f]{2}){3,4}$", col)
+			col[!isCustom] <- pal.side[ col[!isCustom] ]
+			
+			# Draws annotation boxes
+			rect(xleft=(1:nrow(expr))-0.5, xright=(1:nrow(expr))+0.5, ybottom=k-1L, ytop=k, col=col)
+			
+			# Add annotation title
+			if(!is.null(colnames(side))) mtext(side=2, at=k-0.5, text=colnames(side)[k], las=2, line=1)
 		}
-		
-		# Heatmap (bottom right)
-		par(mai=c(mai.bottom, mai.left, 0.1, mai.right))
-		image(expr, xaxt="n", yaxt="n", col=col.heatmap, zlim=zlim)
-		axis(side=1, at=(1:nrow(expr) - 1L) / (nrow(expr) - 1L), labels=rownames(expr), las=2, cex.axis=cex.col, tick=FALSE, line=-0.5)
-		axis(side=2, at=(1:ncol(expr) - 1L) / (ncol(expr) - 1L), labels=colnames(expr), las=2, cex.axis=cex.row, tick=FALSE, line=-0.5)
-		box()
 	}
+	
+	# Heatmap (bottom)
+	par(mai=c(mai.bottom, mai.left, mai.top, mai.right))
+	image(expr, xaxt="n", yaxt="n", col=col.heatmap, zlim=zlim)
+	axis(side=1, at=(1:nrow(expr) - 1L) / (nrow(expr) - 1L), labels=rownames(expr), las=2, cex.axis=cex.col, tick=FALSE, line=-0.5, font=font[1])
+	axis(side=2, at=(1:ncol(expr) - 1L) / (ncol(expr) - 1L), labels=colnames(expr), las=2, cex.axis=cex.row, tick=FALSE, line=-0.5, font=font[2])
+	box()
 	
 	# Invisibly return parameters for heatScale()
 	invisible(

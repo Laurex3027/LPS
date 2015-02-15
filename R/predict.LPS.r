@@ -12,26 +12,56 @@ predict.LPS <- function(
 		subset = NULL,
 		col.lines = "#FFFFFF",
 		col.classes = c("#FFCC00", "#1144CC"),
-		customLayout = FALSE,                  # heat.map()
+		plot = FALSE,
+		side = NULL,                           # heat.map()
 		cex.col = NA,                          # heat.map()
 		cex.row = NA,                          # heat.map()
 		mai.left = NA,                         # heat.map()
 		mai.bottom = NA,                       # heat.map()
 		mai.right = 1,                         # heat.map()
-		side = NULL,                           # heat.map()
+		mai.top = 0.1,                         # heat.map()
 		side.height = 1,                       # heat.map()
 		side.col = NULL,                       # heat.map()
 		col.heatmap = heat(),                  # heat.map()
 		zlim = "0 centered",                   # heat.map()
 		norm = c("rows", "columns", "none"),   # heat.map()
 		norm.robust = FALSE,                   # heat.map()
-		plot = FALSE,                          # heat.map()
-		...
+		customLayout = FALSE,                  # heat.map()
+		getLayout = FALSE,                     # heat.map()
+		...                                    # ignored
 	) {
 	# Arguments
 	type <- match.arg(type)
 	method <- match.arg(method)
 	norm <- match.arg(norm)
+	
+	# Plot layout
+	if(isTRUE(plot) && !isTRUE(customLayout)) {
+		# Layout heights
+		heights <- 3
+		if(!is.null(side))    heights <- c(lcm(ncol(side)*side.height), heights)
+		if(type == "class") { heights <- c(lcm(2*side.height), heights)
+		} else              { heights <- c(1, heights)
+		}
+		
+		# Layout widths
+		widths <- 1L
+		
+		# Layout matrix
+		if(is.null(side)) { mat <- matrix(c(2,1), ncol=1)
+		} else            { mat <- matrix(c(3,1,2), ncol=1)
+		}
+	} else {
+		# No layout call
+		mat <- as.integer(NA)
+		heights <- as.integer(NA)
+		widths <- as.integer(NA)
+	}
+	
+	# Stop returning layout
+	if(isTRUE(getLayout)) {
+		return(list(mat=mat, heights=heights, widths=widths))
+	}
 	
 	if(is.vector(newdata)) {
 		# Use provided scores
@@ -96,26 +126,14 @@ predict.LPS <- function(
 	
 	# Plot
 	if(isTRUE(plot)) {
-		# Layout
+		# Layout call
 		if(!isTRUE(customLayout)) {
-			# Layout heights
-			heights <- 3
-			if(!is.null(side))    heights <- c(lcm(ncol(side)*side.height), heights)
-			if(type == "class") { heights <- c(lcm(2*side.height), heights)
-			} else              { heights <- c(1, heights)
-			}
-			
-			# Layout matrix
-			if(is.null(side)) { layout(matrix(c(2,1), ncol=1), heights=heights)
-			} else            { layout(matrix(c(3,1,2), ncol=1), heights=heights)
-			}
-			
+			layout(mat=mat, heights=heights)
 			on.exit(layout(1))
 		}
 		
-		# Ordering
-		expr <- expr[ order(score) , order(object$coeff) ]
-		if(!is.null(side)) side <- side[ order(score) , , drop=FALSE ]
+		# Order by raw t statistics
+		expr <- expr[ order(score) , order(object$t) ]
 		
 		# Annotation and heatmap
 		out <- c(
@@ -128,19 +146,19 @@ predict.LPS <- function(
 				mai.left = mai.left,
 				mai.bottom = mai.bottom,
 				mai.right = mai.right,
+				mai.top = 0.1,
 				side = side,
 				side.height = side.height,
 				side.col = side.col,
 				col.heatmap = col.heatmap,
 				zlim = zlim,
 				norm = norm,
-				norm.robust = norm.robust,
-				plot = plot
+				norm.robust = norm.robust
 			)
 		)
 		
-		# Score coefficients
-		axis(side=4, at=(1:ncol(expr) - 1L) / (ncol(expr) - 1L), labels=sprintf("%+0.3f", object$coeff[ colnames(expr) ]), las=2, cex.axis=out$cex.row, tick=FALSE)
+		# Print raw t statistics
+		axis(side=4, at=(1:ncol(expr) - 1L) / (ncol(expr) - 1L), labels=sprintf("%+0.3f", object$t[ colnames(expr) ]), las=2, cex.axis=out$cex.row, tick=FALSE)
 		
 		# Sample groups
 		if(type != "score") {
@@ -155,7 +173,7 @@ predict.LPS <- function(
 		abline(h=x/(ncol(expr) - 1L), lwd=2, col=col.lines)
 		
 		# Prediction plot
-		par(mai=c(0, out$mai.left, 0.1, mai.right))
+		par(mai=c(0, out$mai.left, mai.top, mai.right))
 		if(type == "score") {
 			# Score
 			plot(x=1:nrow(expr), xlim=c(0.5, nrow(expr)+0.5), y=score[ order(score) ], type="o", pch=16, cex=0.5, xaxs="i", yaxs="i", xpd=NA, xaxt="n", yaxt="n", xlab="", ylab="Score")

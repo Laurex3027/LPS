@@ -77,6 +77,7 @@ LPS <- function(data, coeff, response, k, threshold, formula, method="fdr", ...)
 	# Coefficient selection (keeping name, formula already expanded)
 	columns <- var.formula(formula, backtick=FALSE)
 	coeffSel <- coeff[,1][ columns , drop=FALSE ]
+	tSel <- coeff[,"t"][ columns , drop=FALSE ]
 	
 	# Expression matrix
 	expr <- as.matrix(data[ , columns , drop=FALSE ])
@@ -99,6 +100,7 @@ LPS <- function(data, coeff, response, k, threshold, formula, method="fdr", ...)
 	# Model object
 	object <- list(
 		coeff = coeffSel,
+		t = tSel,
 		classes = levels(response),
 		scores = lapply(LPS, "attributes<-", NULL),
 		means = sapply(LPS, mean),

@@ -9,18 +9,18 @@
 }
 
 \usage{
-  heat.map(expr, customLayout = FALSE, cex.col = NA, cex.row = NA, mai.left = NA,
-    mai.bottom = NA, mai.right = 0.1, side = NULL, side.height = 1, side.col = NULL,
+  heat.map(expr, side = NULL, cex.col = NA, cex.row = NA, mai.left = NA,
+    mai.bottom = NA, mai.right = 0.1, mai.top = 0.1, side.height = 1, side.col = NULL,
     col.heatmap = heat(), zlim = "0 centered", norm = c("rows", "columns", "none"),
-    norm.robust = FALSE, plot = TRUE)
+    norm.robust = FALSE, customLayout = FALSE, getLayout = FALSE, font = c(1, 3))
 }
 
 \arguments{
   \item{expr}{
     A numeric matrix, holding features (genes) in columns and observations (samples) in rows. Column and row order will not be altered.
 }
-  \item{customLayout}{
-    Single logical value, as \code{\link{layout}} does not allow nested calls, set this to TRUE to make your own call to layout and embed this plot in a wider one.
+  \item{side}{
+    An annotation \code{data.frame} for \code{expr}, or \code{NULL}. Must contain at least a row for each \code{expr} row, and one or many annotation column. Merging is performed on row names, so rows must be named following the same conventions as \code{expr}. Hexadecimal color definitions will be used "as is", other values will be attributed colors according to \code{side.col}.
 }
   \item{cex.col}{
     Single numeric value, character exapansion factor for column names. \code{NA} will compute a value from \code{expr} size, similarly to \code{\link{heatmap}}.
@@ -37,8 +37,8 @@
   \item{mai.right}{
     Single numeric value, right margin in inches (for higher level functions). See \code{\link{par}}.
 }
-  \item{side}{
-    An annotation \code{data.frame} for \code{expr}, or \code{NULL}. Must contain at least a row for each \code{expr} row, and one or many annotation column. Merging is performed on row names, so rows must be named following the same conventions as \code{expr}. Hexadecimal color definitions will be used "as is", other values will be attributed colors according to \code{side.col}.
+  \item{mai.top}{
+    Single numeric value, top margin in inches. See \code{\link{par}}.
 }
   \item{side.height}{
     Single numeric value, scaling factor for annotation track.
@@ -58,8 +58,14 @@
   \item{norm.robust}{
     Single logical value, if \code{TRUE} \code{\link{median}} and \code{\link{mad}} will be used for centering and scaling, else \code{\link{mean}} and \code{\link{sd}}.
 }
-  \item{plot}{
-    Single logical value, whether to plot the heat map or not. Mainly there for compatibility with higher level functions.
+  \item{customLayout}{
+    Single logical value, as \code{\link{layout}} does not allow nested calls, set this to TRUE to make your own call to layout and embed this plot in a wider one. See also \code{getLayout}.
+}
+  \item{getLayout}{
+    Single logical value, whether to only return the \code{layout} arguments that would be used with the set of arguments provided or not. It can prove useful to build custom layouts, e.g. merging this plot to an other. See also \code{customLayout}.
+}
+  \item{font}{
+   Integer vector of length two, the \code{font} used to draw X and Y axis labels respectively (see \code{\link{par}}). Default is to print X labels (usually samples) in normal font and Y labels (usually genes) in italic font.
 }
 }
 
