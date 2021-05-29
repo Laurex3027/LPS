@@ -1,5 +1,44 @@
 \name{LPS-news}
 \title{LPS package NEWS}
+\section{Changes in version 1.0.16 (2021-05-29)}{
+  \itemize{
+    \item{Minor fixes for CRAN submission.}
+    \item{heat.map() and clusterize() now print character annotation as text, only factors are attributed colors.}
+  }
+}
+\section{Changes in version 1.0.15 (2020-01-07)}{
+  \itemize{
+    \item{heat.scale() can now handle float and custom labels.}
+    \item{heat.scale() now prints the title also if horiz=FALSE.}
+  }
+}
+\section{Changes in version 1.0.14 (2019-05-17)}{
+  \itemize{
+    \item{heat.map() side color palette fixed when there are 8 classes.}
+    \item{heat.map() side now attributes a color even to unused factor levels.}
+    \item{heat.map() now attributes colors separately to each 'side' column.}
+    \item{heat.map() now attributes grey shades to numeric columns in 'side'.}
+    \item{heat.map() now handles properly matrices with a single row or column.}
+    \item{'clust.genes' and 'clust.samples' arguments added to clusterize().}
+    \item{'zlim.trim' argument added to heat.map() (previous behavior corresponded to zlim.trim = 0).}
+    \item{Dendrograms can now be disabled in clusterize().}
+  }
+}
+\section{Changes in version 1.0.13 (2016-10-07)}{
+  \itemize{
+    \item{'xaxt' and 'yaxt' arguments added to heat.map().}
+  }
+}
+\section{Changes in version 1.0.12 (2016-05-15)}{
+  \itemize{
+    \item{plot.LPS() no longer merges multiples gray zones into a single one.}
+  }
+}
+\section{Changes in version 1.0.11 (2015-08-21)}{
+  \itemize{
+    \item{Dependencies and NAMESPACE updated to comply with new policy.}
+  }
+}
 \section{Changes in version 1.0.10 (2015-02-15)}{
   \itemize{
     \item{'title' argument added to heat.scale().}

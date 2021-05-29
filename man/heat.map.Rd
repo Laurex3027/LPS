@@ -6,13 +6,22 @@
 
 \description{
   This function draws a heatmap from a matrix, similarly to \code{\link{image}}. It also offers normalization and annotation features, with more control than \code{\link{heatmap}}.
+  
+  \code{side} can provide multiple sample annotations, and are handled differently depending on their class :
+  \describe{
+    \item{numeric}{are attributed grey shades from the minimum to the maximum, which are provided in the legend}
+	\item{factor}{have their levels attributed colors using a default or custom palette. Hexadecimal color codes starting with \code{#} and color names known by R are used "as is".}
+	\item{character}{are printed as is in a blank cell. Hexadecimal color codes starting with \code{#} and color names known by R are used as background colors instead of text.}
+	\item{logical}{are ploted in dark (TRUE) or light (FALSE) gray, leaving NAs in white.}
+  }
 }
 
 \usage{
   heat.map(expr, side = NULL, cex.col = NA, cex.row = NA, mai.left = NA,
     mai.bottom = NA, mai.right = 0.1, mai.top = 0.1, side.height = 1, side.col = NULL,
-    col.heatmap = heat(), zlim = "0 centered", norm = c("rows", "columns", "none"),
-    norm.robust = FALSE, customLayout = FALSE, getLayout = FALSE, font = c(1, 3))
+    side.srt = 0, side.cex = 1, col.heatmap = heat(), zlim = "0 centered",
+	zlim.trim = 0.02, norm = c("rows", "columns", "none"), norm.robust = FALSE,
+	customLayout = FALSE, getLayout = FALSE, font = c(1, 3), xaxt = "s", yaxt = "s")
 }
 
 \arguments{
@@ -46,11 +55,20 @@
   \item{side.col}{
     A function returning as many colors as requested by its sole argument, defining the colors to be used for \code{side} legend. Default uses a custom palette for few values, and a derivative of \code{\link{rainbow}} if more than 8 colors are needed.
 }
+  \item{side.srt}{
+    Single numeric value, determining the string rotation angle when writing character side columns (default is 0, horizontal, 90 is suggested for vertical text on busy heat maps).
+}
+  \item{side.cex}{
+    Single numeric value, the character expansion factor to use for character side columns.
+}
   \item{col.heatmap}{
     Character vector of colors, to be used for the cells of the heat map.
 }
   \item{zlim}{
     Numeric vector of length two, defining minimal and maximal \code{expr} values that will be mapped to colors in \code{col.heatmap}. Values outside of this range will be rounded to the mearest boundary. Two special values are also allowed : "0 centered" to get a symetrical range around 0 (with the default palette, it enforces 0 as the center color), and "range" to get \code{expr} range after normalization.
+}
+  \item{zlim.trim}{
+    Single numeric value between 0 and 1, defining the proportion of extreme values (equally split on both sides) to remove before computing "0 centered" or "range" \code{zlim}.
 }
   \item{norm}{
     Single character value, normalization to be performed (use "none" to perform no normalization). "rows" will center and scale genes, while "columns" will center and scale samples. The functions used depend on \code{norm.robust}.
@@ -66,6 +84,12 @@
 }
   \item{font}{
    Integer vector of length two, the \code{font} used to draw X and Y axis labels respectively (see \code{\link{par}}). Default is to print X labels (usually samples) in normal font and Y labels (usually genes) in italic font.
+}
+  \item{xaxt}{
+   Single letter, whether to print column labels ("s") or not ("n").
+}
+  \item{yaxt}{
+   Single letter, whether to print row labels ("s") or not ("n").
 }
 }
 
